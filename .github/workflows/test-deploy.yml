@@ -32,15 +32,26 @@ jobs:
           cd test
           go test -run TestOrder
 
-      - name: Install Docker Credential Helper
+      - name: Install pass and set up GPG
         run: |
           sudo apt-get update
-          sudo apt-get install -y gnupg2 pass
+          sudo apt-get install -y pass gnupg2
+          gpg --batch --gen-key <<-EOF
+          Key-Type: default
+          Subkey-Type: default
+          Name-Real: Docker Credential Helper
+          Name-Email: docker@example.com
+          Expire-Date: 0
+          %no-protection
+          EOF
+          gpg --list-secret-keys --keyid-format LONG
+          GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep "sec   rsa" | awk '{print $2}' | cut -d '/' -f 2)
+          pass init $GPG_KEY_ID
 
       - name: Set Up Docker Credential Helper
         run: |
           mkdir -p ~/.docker
-          echo '{"credsStore":"secretservice"}' > ~/.docker/config.json
+          echo '{"credsStore":"pass"}' > ~/.docker/config.json
 
       - name: Build and push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
