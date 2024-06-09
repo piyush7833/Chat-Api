@@ -21,8 +21,7 @@ jobs:
           go-version: 1.22.2
 
       - name: Install dependencies
-        run: |
-          go mod download
+        run: go mod download
 
       - name: Test code
         env:
@@ -55,9 +54,8 @@ jobs:
           ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
           ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION }}
           ECR_IMAGE_URI: ${{ secrets.AWS_ECR_IMAGE_URL }}
-          # IMAGE_URI: piyush7833/chat-api:latest
         run: |
-          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin $ECR_IMAGE_URI
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_IMAGE_URI
           docker tag piyush7833/chat-api:latest $ECR_IMAGE_URI:latest
           docker push $ECR_IMAGE_URI:latest
   
@@ -65,7 +63,7 @@ jobs:
           TASK_DEFINITION_JSON=$(aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION)
           
           echo "Updating task definition with new image"
-          NEW_TASK_DEF_JSON=$(echo $TASK_DEFINITION_JSON | jq --arg IMAGE_URI "$ECR_IMAGE_URI" '.taskDefinition | .containerDefinitions[0].image=$ECR_IMAGE_URI')
+          NEW_TASK_DEF_JSON=$(echo $TASK_DEFINITION_JSON | jq --arg IMAGE_URI "$ECR_IMAGE_URI:latest" '.taskDefinition | .containerDefinitions[0].image=$IMAGE_URI')
           
           echo "Registering new task definition"
           NEW_TASK_DEF_FAMILY=$(echo $NEW_TASK_DEF_JSON | jq -r .family)
@@ -83,6 +81,7 @@ jobs:
 
           echo "Updating ECS service to use the new task definition"
           aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $NEW_TASK_DEF_ARN
+
   
 
   # deploy:
