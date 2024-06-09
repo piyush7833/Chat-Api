@@ -34,5 +34,5 @@ func InitRoutes() (*mux.Router, *mux.Router) {
 
 func Close() {
 	scripts.DroptTables()
-	services.CloseDb()
+	services.DisconnectDb()
 }
