@@ -28,7 +28,10 @@ func JSON(w http.ResponseWriter, status int, payload interface{}, message string
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	w.Write(response)
+	if _, err := w.Write(response); err != nil {
+		// Handle the error
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+	}
 }
 
 // Error sends a JSON error response to the client.

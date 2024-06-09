@@ -1,6 +1,8 @@
 package test
 
 import (
+	"os"
+
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/piyush7833/Chat-Api/middlewares"
@@ -10,8 +12,10 @@ import (
 )
 
 func Init() error {
-	if err := godotenv.Load(".env.test"); err != nil {
-		return err
+	if os.Getenv("ENVIRONEMENT") == "" || os.Getenv("ENVIRONEMENT") == "test" {
+		if err := godotenv.Load(".env.test"); err != nil {
+			return err
+		}
 	}
 	services.ConnectDb()
 	scripts.CreateTables()

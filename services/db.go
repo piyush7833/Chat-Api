@@ -255,7 +255,7 @@ func InsertRow(table string, valuesPtr interface{}) (int64, types.ErrorType) {
 
 // columnList returns a comma-separated list of columns
 func columnList(columns []string) string {
-	return fmt.Sprintf(`%s`, join(columns, ", "))
+	return join(columns, ", ")
 }
 
 // paramList returns a comma-separated list of parameter placeholders
@@ -265,7 +265,7 @@ func paramList(count int) string {
 
 // join concatenates strings with a separator
 func join(string []string, sep string) string {
-	return fmt.Sprintf(`%s`, strings.Join(string, sep))
+	return strings.Join(string, sep)
 }
 
 func DeleteRow(table, condition string) (int64, types.ErrorType) {

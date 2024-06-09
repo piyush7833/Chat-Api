@@ -1,7 +1,6 @@
 package scripts
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -37,7 +36,7 @@ func CreateTables() {
 	for _, file := range files {
 		// if strings.HasSuffix(file.Name(), ".sql") {
 		// Read the contents of the SQL file
-		content, err := ioutil.ReadFile(filepath.Join(modelsDir, file))
+		content, err := os.ReadFile(filepath.Join(modelsDir, file))
 		if err != nil {
 			log.Printf("Error reading file %s: %v\n", file, err)
 			continue

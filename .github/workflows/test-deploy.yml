@@ -23,6 +23,10 @@ jobs:
           go mod download
 
       - name: test code
+        env:
+          DB_URI: ${{ secrets.TEST_DB_URI }}
+          JWT_SECRET: ${{ secrets.TEST_JWT_SECRET }}
+          ENVIRONMENT: ${{ secrets.ENVIRNONMENT }}
         run: |
           cd test
           go test
