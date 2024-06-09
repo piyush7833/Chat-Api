@@ -32,6 +32,16 @@ jobs:
           cd test
           go test -run TestOrder
 
+      - name: Install Docker Credential Helper
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg2 pass
+
+      - name: Set Up Docker Credential Helper
+        run: |
+          mkdir -p ~/.docker
+          echo '{"credsStore":"secretservice"}' > ~/.docker/config.json
+
       - name: Build and push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
@@ -42,7 +52,8 @@ jobs:
         run: |
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker build --build-arg JWT_SECRET=${JWT_SECRET} --build-arg DB_URI=${DB_URI} -t piyush7833/chat-api:latest .
-          docker push piyush7833/chat-api:latest
+          docker tag piyush7833/chat-api:latest docker.io/piyush7833/chat-api:latest
+          docker push docker.io/piyush7833/chat-api:latest
 
       - name: Update ECS task definition and service
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -55,6 +66,7 @@ jobs:
           ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION }}
           ECR_IMAGE_URI: ${{ secrets.AWS_ECR_IMAGE_URL }}
         run: |
+          aws config AWS-ACCESS-KEY-ID $AWS_ACCESS_KEY_ID set AWS-SECRET-ACCESS-KEY $AWS_SECRET_ACCESS_KEY set region $AWS_REGION set
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_IMAGE_URI
           docker tag piyush7833/chat-api:latest $ECR_IMAGE_URI:latest
           docker push $ECR_IMAGE_URI:latest
@@ -82,7 +94,6 @@ jobs:
           echo "Updating ECS service to use the new task definition"
           aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $NEW_TASK_DEF_ARN
 
-  
 
   # deploy:
   #   runs-on: ubuntu-latest
