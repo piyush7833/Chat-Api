@@ -1,12 +1,16 @@
 package test
 
 import (
+	"log"
 	"os"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	Init()
+	err := Init()
+	if err != nil {
+		log.Fatal(err)
+	}
 	code := m.Run()
 	Close()
 	os.Exit(code)
