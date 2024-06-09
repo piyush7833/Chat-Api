@@ -35,6 +35,11 @@ func ConnectDb() {
 
 }
 
+// CloseDb closes the database connection
+func DisconnectDb() {
+	Db.Close()
+}
+
 // Now you can perform database operations using this 'db' connection
 
 func ValidateColumns(selectedColumns []string, validColumns map[string]bool) ([]string, error) {
@@ -178,7 +183,7 @@ func UpdateRows(table string, updateData interface{}, where *string, validColumn
 		}
 	}
 
-	fmt.Println(columns, values)
+	// fmt.Println(columns, values)
 	query := ConstructUpdateQuery(table, columns, where)
 	stmt, err := Db.PrepareContext(ctx, query)
 	if err != nil {

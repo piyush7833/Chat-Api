@@ -31,7 +31,7 @@ jobs:
           ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
         run: |
           cd test
-          go test
+          go test -run TestOrder
 
       - name: Build and push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

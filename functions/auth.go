@@ -2,7 +2,6 @@ package functions
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -50,10 +49,19 @@ func SignUp(user types.SignupType) (interface{}, types.ErrorType) {
 func Signin(user types.SignInType, w http.ResponseWriter) (interface{}, types.ErrorType) {
 	ctx, cancel := context.WithTimeout(context.Background(), config.CtxTimeout*time.Second)
 	defer cancel()
+	username := helpers.GetNullableValue(user.Username)
+	email := helpers.GetNullableValue(user.Email)
+	phone := helpers.GetNullableValue(user.Phone)
+	if user.Password == nil {
+		return nil, types.ErrorType{
+			Message:    "Password is missing",
+			StatusCode: 500,
+		}
+	}
 	query := `SELECT password,id FROM "User" WHERE username = $1 Or email = $2 or phone = $3`
-	row, err := services.Db.QueryContext(ctx, query, user.Username, user.Email, user.Phone)
+	row, err := services.Db.QueryContext(ctx, query, username, email, phone)
 	if err != nil {
-		fmt.Println("Error executing query:", err.Error())
+		// fmt.Println("Error executing query:", err.Error())
 		return nil, types.ErrorType{
 			Message:    err.Error(),
 			StatusCode: 500,
@@ -64,13 +72,14 @@ func Signin(user types.SignInType, w http.ResponseWriter) (interface{}, types.Er
 	if !row.Next() {
 		if err := row.Err(); err != nil {
 			// Handle the error
-			fmt.Println("Error iterating rows:", err.Error())
+			// fmt.Println("Error iterating rows:", err.Error())
 			return nil, types.ErrorType{
 				Message:    err.Error(),
 				StatusCode: 500,
 			}
 		}
-		fmt.Println("No rows returned")
+		// fmt.Println("No rows returned")
+
 		return nil, types.ErrorType{
 			Message:    "No user found",
 			StatusCode: 404,
@@ -90,7 +99,7 @@ func Signin(user types.SignInType, w http.ResponseWriter) (interface{}, types.Er
 	if pswdErr != nil {
 		return nil, types.ErrorType{
 			Message:    "Incorrect password",
-			StatusCode: 500,
+			StatusCode: 403,
 		}
 	}
 	token, _ := helpers.GenerateJWT(id)
@@ -101,6 +110,6 @@ func Signin(user types.SignInType, w http.ResponseWriter) (interface{}, types.Er
 			StatusCode: 500,
 		}
 	}
-	// User found, return the user data
+	// User found, return the user dataW
 	return nil, types.ErrorType{}
 }
