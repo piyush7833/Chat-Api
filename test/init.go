@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gorilla/mux"
@@ -12,6 +13,7 @@ import (
 )
 
 func Init() error {
+	fmt.Println(os.Getenv("ENVIRONEMENT"), "ENVIRONEMENT")
 	if os.Getenv("ENVIRONEMENT") == "" || os.Getenv("ENVIRONEMENT") == "test" {
 		if err := godotenv.Load(".env.test"); err != nil {
 			return err
