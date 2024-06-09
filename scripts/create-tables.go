@@ -13,7 +13,7 @@ func CreateTables() {
 	// Get a list of all SQL files in the current directory
 	var dir string
 	var err error
-	if os.Getenv("ENVIRONEMENT") == "test" {
+	if os.Getenv("ENVIRONMENT") == "test" {
 		childDir, err := os.Getwd()
 		dir = filepath.Dir(childDir)
 		if err != nil {

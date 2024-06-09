@@ -26,10 +26,10 @@ jobs:
         env:
           DB_URI: ${{ secrets.TEST_DB_URI }}
           JWT_SECRET: ${{ secrets.TEST_JWT_SECRET }}
-          ENVIRONMENT: ${{ secrets.ENVIRNONMENT }}
+          ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
         run: |
           cd test
-          go test 
+          go test l,l
 
       - name: Build and push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

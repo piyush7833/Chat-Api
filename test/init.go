@@ -13,8 +13,8 @@ import (
 )
 
 func Init() error {
-	fmt.Println(os.Getenv("ENVIRONEMENT"), "ENVIRONEMENT")
-	if os.Getenv("ENVIRONEMENT") == "" || os.Getenv("ENVIRONEMENT") == "test" {
+	fmt.Println(os.Getenv("ENVIRONMENT"), "ENVIRONMENT")
+	if os.Getenv("ENVIRONMENT") == "" || os.Getenv("ENVIRONMENT") == "test" {
 		if err := godotenv.Load(".env.test"); err != nil {
 			return err
 		}
