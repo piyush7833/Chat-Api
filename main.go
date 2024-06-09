@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -16,8 +17,10 @@ func init() {
 
 }
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatal(err)
+	if os.Getenv("ENVIRONMENT") == "" || os.Getenv("ENVIRONMENT") == "development" {
+		if err := godotenv.Load(".env"); err != nil {
+			log.Fatal(err)
+		}
 	}
 	services.ConnectDb()
 	router := mux.NewRouter()
