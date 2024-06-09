@@ -32,29 +32,10 @@ jobs:
           cd test
           go test -run TestOrder
 
-      - name: Install pass and set up GPG
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pass gnupg2
-          gpg --batch --gen-key <<-EOF
-          Key-Type: default
-          Subkey-Type: default
-          Name-Real: Docker Credential Helper
-          Name-Email: docker@example.com
-          Expire-Date: 0
-          %no-protection
-          EOF
-          gpg --list-secret-keys --keyid-format LONG
-          GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep "sec   rsa" | awk '{print $2}' | cut -d '/' -f 2)
-          pass init $GPG_KEY_ID
-
-      - name: Set Up Docker Credential Helper
-        run: |
-          mkdir -p ~/.docker
-          echo '{"credsStore":"pass"}' > ~/.docker/config.json
-
       - name: Build and push Docker image
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: |
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main'
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -63,8 +44,8 @@ jobs:
         run: |
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker build --build-arg JWT_SECRET=${JWT_SECRET} --build-arg DB_URI=${DB_URI} -t piyush7833/chat-api:latest .
-          docker tag piyush7833/chat-api:latest docker.io/piyush7833/chat-api:latest
-          docker push docker.io/piyush7833/chat-api:latest
+          docker push piyush7833/chat-api:latest
+  
 
       - name: Update ECS task definition and service
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
