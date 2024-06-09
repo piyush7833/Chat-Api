@@ -12,11 +12,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 #checks project source code into the container
-      
-      - uses: actions/setup-go@v4 #sets up go environment
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
           go-version: 1.22.2
+
 
       - name: Install dependencies
         run: |
@@ -29,12 +32,12 @@ jobs:
           ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
         run: |
           cd test
-          go test
+          go test 
 
       - name: Build and push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t piyush7833/chat-api .
+          docker build --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} --build-arg DB_URI=${{ secrets.DB_URI }} -t piyush7833/chat-api .
           docker tag chat-api piyush7833/chat-api
-          docker push piyuhs7833/chat-api
+          docker push piyush7833/chat-api
