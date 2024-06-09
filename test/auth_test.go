@@ -1,18 +1,9 @@
 package test
 
 import (
-	"log"
 	"net/http"
 	"testing"
 )
-
-// signup
-func init() {
-	err := Init()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 func TestCreateUser(t *testing.T) {
 	userData := `{
@@ -51,34 +42,34 @@ func TestMissingFieldErrorSignup(t *testing.T) {
 
 //signin
 
-func LoginUser(t *testing.T) {
+func TestLoginUser(t *testing.T) {
 	userData := `{
-        "username": "test_user_2",
-		"password": "password",
+        "username": "test_user",
+		"password": "password"
     }`
 	TestPostRequest(t, userData, "/api/signin", 200, "Login successfull")
 
 }
 
-func IncorrectPasswordError(t *testing.T) {
+func TestIncorrectPasswordError(t *testing.T) {
 	userData := `{
-        "username": "test_user_2",
-		"password": "incorrect",
+        "username": "test_user",
+		"password": "incorrect"
     }`
 	TestPostRequest(t, userData, "/api/signin", 403, "Incorrect Password")
 
 }
-func NoUserError(t *testing.T) {
+func TestNoUserErrorSignin(t *testing.T) {
 	userData := `{
         "username": "test_user_not_found",
-		"password": "password",
+		"password": "password"
     }`
 	TestPostRequest(t, userData, "/api/signin", 404, "User not found")
 }
 
-func MissingFieldErrorSignin(t *testing.T) {
+func TestMissingFieldErrorSignin(t *testing.T) {
 	userData := `{
-        "username": "test_user_2",
+        "username": "test_user"
     }`
 	TestPostRequest(t, userData, "/api/signin", 500, "Field not found")
 }

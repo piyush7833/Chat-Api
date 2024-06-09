@@ -31,3 +31,8 @@ func InitRoutes() (*mux.Router, *mux.Router) {
 	routes.FriendRequestRoutes(router.PathPrefix("/api/fr").Subrouter(), protectedRouter.PathPrefix("/fr").Subrouter())
 	return router, protectedRouter
 }
+
+func Close() {
+	scripts.DroptTables()
+	services.CloseDb()
+}
