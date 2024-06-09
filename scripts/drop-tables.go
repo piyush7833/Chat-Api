@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
 )
 
-func main() {
+func DroptTables() {
 	dbURI := os.Getenv("DB_URI")
 	db, err := sql.Open("postgres", dbURI)
 	if err != nil {

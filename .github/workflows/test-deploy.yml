@@ -20,23 +20,27 @@ jobs:
         with:
           go-version: 1.22.2
 
-
       - name: Install dependencies
         run: |
           go mod download
 
-      - name: test code
+      - name: Test code
         env:
           DB_URI: ${{ secrets.TEST_DB_URI }}
           JWT_SECRET: ${{ secrets.TEST_JWT_SECRET }}
           ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
         run: |
           cd test
-          go test 
+          go test
 
       - name: Build and push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DB_URI: ${{ secrets.DB_URI }}
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build --build-arg JWT_SECRET= ${{ secrets.JWT_SECRET }}--build-arg DB_URI=${{ secrets.DB_URI }} -t piyush7833/chat-api:latest .
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+          docker build --build-arg JWT_SECRET=${JWT_SECRET} --build-arg DB_URI=${DB_URI} -t piyush7833/chat-api:latest .
           docker push piyush7833/chat-api:latest
