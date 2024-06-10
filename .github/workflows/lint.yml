@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  lint: 
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4  # Checks project source code into the container
