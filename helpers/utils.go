@@ -13,7 +13,6 @@ func GetBodyInJson(r *http.Request, bodyType interface{}) error {
 	if err != nil {
 		return err
 	}
-
 	err = json.Unmarshal(body, bodyType)
 	if err != nil {
 		return err
@@ -38,8 +37,7 @@ func StructToMap(data interface{}) map[string]interface{} {
 	for i := 0; i < val.NumField(); i++ {
 		field := typ.Field(i)
 		value := val.Field(i)
-		key := strings.ToLower(field.Name) // Use the struct field name directly
-		// ogKey := field.Tag.Get("json")
+		key := strings.ToLower(string(field.Name[0])) + field.Name[1:]
 		if value.Kind() == reflect.Ptr {
 			if value.IsNil() {
 				continue // Omit nil pointers

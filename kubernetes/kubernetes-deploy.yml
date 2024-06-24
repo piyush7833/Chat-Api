@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: # Information about the Deployment
+  # Unique key of the Deployment instance
+  name: chat-api
+spec:
+  # 3 Pods should exist at all times.
+  replicas: 2 # number of pods
+  selector:
+    matchLabels:  #labels and matchLabels are used to select the pods and both should be same
+      app: chat-api
+  template: #information about the pod
+    metadata:
+      labels:
+        # Apply this label to pods and default
+        # the Deployment label selector to this value
+        app: chat-api
+    spec:
+      containers: #containers in the pod
+      - name: chat-api
+        # Run this image
+        image: piyush7833/chat-api:02

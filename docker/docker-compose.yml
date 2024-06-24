@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  postgres:
+    container_name: chat-db
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: chat
+      POSTGRES_PASSWORD: chat
+      POSTGRES_DB: chat
+
+volumes:
+  data: null 

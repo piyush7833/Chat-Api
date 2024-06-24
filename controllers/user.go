@@ -2,10 +2,9 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/gorilla/context"
+	"github.com/piyush7833/Chat-Api/config"
 	"github.com/piyush7833/Chat-Api/functions"
 	"github.com/piyush7833/Chat-Api/helpers"
 	"github.com/piyush7833/Chat-Api/types"
@@ -16,7 +15,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var user types.UpdateUserType
 	err := helpers.GetBodyInJson(r, &user)
 	if err != nil {
-		helpers.Error(w, 500, "Error in retriving body")
+		helpers.Error(w, 500, err.Error())
 		return
 	}
 	res, error := functions.UpdateUser(user, JwtData.Id)
@@ -29,17 +28,13 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
 	queryValues := r.URL.Query()
-	page := queryValues.Get("page")
-	i, _ := strconv.Atoi(page)
-	columns := queryValues["columns"]
-	var selectedColumns = []string{}
 
-	if len(columns) <= 0 {
-		selectedColumns = append(selectedColumns, "id", "name", "username", "email", "phone", "image", "createdAt")
-	} else {
-		selectedColumns = append(selectedColumns, strings.Split(columns[0], ",")...)
-	}
-	res, error := functions.GetAllUser(i, selectedColumns)
+	page := helpers.ProcessQuerryParams(queryValues["page"], []string{"1"}, "number").(int)
+	selectedColumns := helpers.ProcessQuerryParams(queryValues["columns"], config.GetUserDefaultColumns(), "array").([]string)
+	orderByColumns := helpers.ProcessQuerryParams(queryValues["orderBy"], []string{"createdAt"}, "array").([]string)
+	isDesc := helpers.ProcessQuerryParams(queryValues["isDesc"], []string{"true"}, "bool").(bool)
+
+	res, error := functions.GetAllUser(page, selectedColumns, orderByColumns, isDesc)
 	if error.StatusCode != 0 {
 		helpers.Error(w, error.StatusCode, error.Message)
 		return
@@ -49,19 +44,14 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 
 func GetParticularUser(w http.ResponseWriter, r *http.Request) {
 	queryValues := r.URL.Query()
-	id := queryValues.Get("id")
-	userName := queryValues.Get("userName")
+
+	id := helpers.ProcessQuerryParams(queryValues["id"], []string{""}, "string").(string)
+	userName := helpers.ProcessQuerryParams(queryValues["username"], []string{""}, "string").(string)
+	selectedColumns := helpers.ProcessQuerryParams(queryValues["columns"], config.GetUserDefaultColumns(), "array").([]string)
+
 	if id == "" && userName == "" {
 		JwtData := context.Get(r, "userId").(*helpers.Claims)
 		id = JwtData.Id
-	}
-
-	columns := queryValues["columns"]
-	var selectedColumns = []string{}
-	if len(columns) <= 0 {
-		selectedColumns = append(selectedColumns, "id", "name", "username", "email", "phone", "image", "createdAt")
-	} else {
-		selectedColumns = append(selectedColumns, strings.Split(columns[0], ",")...)
 	}
 
 	var res any

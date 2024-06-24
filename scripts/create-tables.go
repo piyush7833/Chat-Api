@@ -30,7 +30,7 @@ func CreateTables() {
 	if err != nil {
 		log.Fatal("Error reading directory:", err)
 	}
-	files := []string{"user.sql", "friend_request.sql", "friend.sql", "media.sql", "message.sql", "notification.sql", "reminder.sql", "status.sql", "call.sql", "block.sql", "tag.sql", "alter_tables.sql"}
+	files := []string{"users.sql", "user-relation.sql", "groups.sql", "group-users.sql", "messages.sql", "message-thread.sql", "notificationIds.sql", "reminders.sql", "statuses.sql", "calls.sql", "tags.sql", "visibility.sql", "alter_tables.sql"}
 
 	// Iterate over each SQL file
 	for _, file := range files {

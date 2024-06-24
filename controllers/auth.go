@@ -12,7 +12,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	// Read the request body
 	var user types.SignupType
 	err := helpers.GetBodyInJson(r, &user)
-	if helpers.CheckNilErr(err, "Error in retriving body", w) {
+	if err != nil {
+		helpers.Error(w, 500, err.Error())
 		return
 	}
 	res, error := functions.SignUp(user)
@@ -24,9 +25,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignIn(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println("Signin")
 	var user types.SignInType
 	err := helpers.GetBodyInJson(r, &user)
-	if helpers.CheckNilErr(err, "Error in retriving body", w) {
+	// fmt.Println(user, "user from controller")
+	if err != nil {
+		helpers.Error(w, 500, err.Error())
 		return
 	}
 	res, error := functions.Signin(user, w)

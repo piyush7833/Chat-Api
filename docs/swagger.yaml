@@ -1,0 +1,11 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+  description: This is a sample swagger documentation for chat-api
+  termsOfService: http://swagger.io/terms/
+  title: Chat-API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

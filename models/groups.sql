@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS "groups" (
+    "id" VARCHAR(255) NOT NULL DEFAULT uuid_generate_v4(),
+    "name" VARCHAR(255) NOT NULL,
+    "ownerId" VARCHAR(255) NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY ("id")
+);

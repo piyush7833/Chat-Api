@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"github.com/piyush7833/Chat-Api/config"
 	"github.com/piyush7833/Chat-Api/services"
 	"github.com/piyush7833/Chat-Api/types"
 )
@@ -9,13 +10,7 @@ func UpdateUser(user types.UpdateUserType, id string) (interface{}, types.ErrorT
 	var where *string
 	var whereClause = "id = " + "'" + id + "'"
 	where = &whereClause
-	validColumns := map[string]bool{
-		"name":  true,
-		"email": true,
-		"image": true,
-		"phone": true,
-	}
-	rowsAffected, err := services.UpdateRows("User", user, where, validColumns)
+	rowsAffected, err := services.UpdateRows("users", user, where, config.UpdateValidUserColumns())
 	if err.StatusCode != 0 {
 		return nil, types.ErrorType{
 			Message:    err.Message,
@@ -27,21 +22,11 @@ func UpdateUser(user types.UpdateUserType, id string) (interface{}, types.ErrorT
 			StatusCode: 404,
 		}
 	}
-	return nil, error
+	return nil, types.ErrorType{}
 }
 
-func GetAllUser(page int, columns []string) (interface{}, types.ErrorType) {
-	validColumns := map[string]bool{
-		"id":        true,
-		"name":      true,
-		"username":  true,
-		"email":     true,
-		"password":  true,
-		"image":     true,
-		"phone":     true,
-		"createdAt": true,
-	}
-	results, err := services.GetRows("User", page, columns, validColumns, nil)
+func GetAllUser(page int, columns []string, orderBy []string, isDesc bool) (interface{}, types.ErrorType) {
+	results, err := services.GetRows("users", page, columns, config.GetValidUserColumns(), nil, nil, nil, nil, true)
 	if err.StatusCode != 0 {
 		return nil, types.ErrorType{
 			Message:    err.Message,
@@ -52,59 +37,36 @@ func GetAllUser(page int, columns []string) (interface{}, types.ErrorType) {
 }
 
 func GetParticularUserById(id string, columns []string) (interface{}, types.ErrorType) {
-
-	validColumns := map[string]bool{
-		"id":        true,
-		"name":      true,
-		"username":  true,
-		"email":     true,
-		"password":  true,
-		"image":     true,
-		"phone":     true,
-		"createdAt": true,
-	}
-	var where *string
 	var whereClause = "id = " + "'" + id + "'"
-	where = &whereClause
-	results, err := services.GetRows("User", 0, columns, validColumns, where)
+	results, err := services.GetRows("users", 0, columns, config.GetValidUserColumns(), &whereClause, nil, nil, nil, true)
 	if err.StatusCode != 0 {
 		return nil, types.ErrorType{
 			Message:    err.Message,
 			StatusCode: err.StatusCode,
 		}
 	}
-	return results, error
+	return results[0], types.ErrorType{}
 	// return res, error
 }
 
 func GetUsersByUsername(userName string, columns []string) (interface{}, types.ErrorType) {
-	validColumns := map[string]bool{
-		"id":        true,
-		"name":      true,
-		"username":  true,
-		"email":     true,
-		"password":  true,
-		"image":     true,
-		"phone":     true,
-		"createdAt": true,
-	}
-	var where *string
 	var whereClause = "username = " + "'" + userName + "'"
-	where = &whereClause
-	results, err := services.GetRows("User", 0, columns, validColumns, where)
+	results, err := services.GetRows("users", 0, columns, config.GetValidUserColumns(), &whereClause, nil, nil, nil, true)
 	if err.StatusCode != 0 {
 		return nil, types.ErrorType{
 			Message:    err.Message,
 			StatusCode: err.StatusCode,
 		}
 	}
-	return results, error
+	return results[0], types.ErrorType{}
 }
+
 func DeleteUser(id string) (interface{}, types.ErrorType) {
 	var where *string
 	var whereClause = "id = " + "'" + id + "'"
 	where = &whereClause
-	rowsAffected, err := services.DeleteRow("User", *where)
+
+	rowsAffected, err := services.DeleteRow("users", *where)
 	if err.StatusCode != 0 {
 		return nil, types.ErrorType{
 			Message:    err.Message,
@@ -116,5 +78,5 @@ func DeleteUser(id string) (interface{}, types.ErrorType) {
 			StatusCode: 404,
 		}
 	}
-	return nil, error
+	return nil, types.ErrorType{}
 }
