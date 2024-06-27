@@ -54,7 +54,6 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           DB_URI: ${{ secrets.DB_URI }}
         run: |
-          cd docker
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker build --build-arg JWT_SECRET=${JWT_SECRET} --build-arg DB_URI=${DB_URI} -t piyush7833/chat-api:latest .
           docker push piyush7833/chat-api:latest
