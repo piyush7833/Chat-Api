@@ -38,6 +38,10 @@ func UpdateUserRelation(relation types.UpdateUserRelationType, id string, userId
 	var whereClause = "id = " + "'" + id + "'"
 	userRelation, err := GetParticularUserRelation(id, []string{"userId", "relatedUserId"}, userId)
 	if err.StatusCode != 0 {
+		if strings.Contains(err.Message, "No userRelation found") {
+			err.Message = "User relation does not exists or it is not associated with you"
+			err.StatusCode = 403
+		}
 		return nil, err
 	}
 	userRelationMap := userRelation.(map[string]interface{})
@@ -62,6 +66,10 @@ func UpdateUserRelation(relation types.UpdateUserRelationType, id string, userId
 	}
 	rowsAffected, err := services.UpdateRows("userRelation", relation, &whereClause, validColumns)
 	if err.StatusCode != 0 {
+		if strings.Contains(err.Message, "No userRelation found") {
+			err.Message = "User relation does not exists or it is not associated with you"
+			err.StatusCode = 403
+		}
 		return nil, types.ErrorType{
 			Message:    err.Message,
 			StatusCode: err.StatusCode,
@@ -128,6 +136,9 @@ func GetAllUserRelations(status string, page int, columns []string, userId strin
 	joinClause := fmt.Sprintf(`JOIN "users" %s ON %s."userId" = %s.id JOIN "users" %s ON %s."relatedUserId" = %s.id`, urAlias["user"], urAlias["userRelation"], urAlias["user"], urAlias["relatedUser"], urAlias["userRelation"], urAlias["relatedUser"])
 	res, err := services.GetRows("userRelation", page, columns, config.GetValidUserRelationColumns(), &whereClause, &joinClause, joinColumns, orderBy, isDesc)
 	if err.StatusCode != 0 {
+		if strings.Contains(err.Message, "No userRelation found") {
+			err.StatusCode = 200
+		}
 		return nil, err
 	}
 	return res, types.ErrorType{}
@@ -135,36 +146,42 @@ func GetAllUserRelations(status string, page int, columns []string, userId strin
 
 func GetParticularUserRelation(id string, columns []string, userId string) (interface{}, types.ErrorType) {
 	urAlias := alias.GetUserRelationAlias()
+
 	joinColumns := config.GetJoinUserRelationColumns(urAlias["userRelation"], urAlias["user"], urAlias["relatedUser"])
-	whereClause := urAlias["userRelation"] + ".id = " + "'" + id + "'"
+
+	// whereClause := urAlias["userRelation"] + ".id = " + "'" + id + "'"
+	whereClause := fmt.Sprintf(`%s.id = '%s' and (%s."userId"='%s' or %s."relatedUserId"='%s')`, urAlias["userRelation"], id, urAlias["userRelation"], userId, urAlias["userRelation"], userId)
+
 	joinClause := fmt.Sprintf(`JOIN "users" %s ON %s."userId" = %s.id JOIN "users" %s ON %s."relatedUserId" = %s.id`, urAlias["user"], urAlias["userRelation"], urAlias["user"], urAlias["relatedUser"], urAlias["userRelation"], urAlias["relatedUser"])
+
 	res, err := services.GetRows("userRelation", 0, columns, config.GetValidUserRelationColumns(), &whereClause, &joinClause, joinColumns, nil, true)
+
 	if err.StatusCode != 0 {
+		if strings.Contains(err.Message, "No userRelation found") {
+			return nil, types.ErrorType{
+				Message:    "User relation does not exists or it is not associated with you",
+				StatusCode: 403,
+			}
+		}
 		return nil, err
 	}
-	userRelationMap := res[0]
-	if userRelationMap["userId"] != userId && userRelationMap["relatedUserId"] != userId {
-		return nil, types.ErrorType{
-			Message:    "Only user and related user are allowed to view this relation",
-			StatusCode: 403,
-		}
-	}
+
 	return res[0], types.ErrorType{}
 }
 
 func DeleteUserRelations(id string, userId string) (interface{}, types.ErrorType) {
-	var whereClause = "id = " + "'" + id + "'"
-	userRelation, err := GetParticularUserRelation(id, []string{"userId", "relatedUserId"}, userId)
-	if err.StatusCode != 0 {
-		return nil, err
-	}
-	userRelationMap := userRelation.(map[string]interface{})
-	if userRelationMap["userId"] != userId && userRelationMap["relatedUserId"] != userId {
-		return nil, types.ErrorType{
-			Message:    "Only user and related user are allowed to delete this request",
-			StatusCode: 403,
-		}
-	}
+	var whereClause = fmt.Sprintf(`id = '%s' and ("userId"='%s' or "relatedUserId"='%s')`, id, userId, userId)
+	// userRelation, err := GetParticularUserRelation(id, []string{"userId", "relatedUserId"}, userId)
+	// if err.StatusCode != 0 {
+	// 	return nil, err
+	// }
+	// userRelationMap := userRelation.(map[string]interface{})
+	// if userRelationMap["userId"] != userId && userRelationMap["relatedUserId"] != userId {
+	// 	return nil, types.ErrorType{
+	// 		Message:    "Only user and related user are allowed to delete this request",
+	// 		StatusCode: 403,
+	// 	}
+	// }
 	rowsAffected, err := services.DeleteRow("userRelation", whereClause)
 	if err.StatusCode != 0 {
 		return nil, types.ErrorType{
@@ -173,8 +190,8 @@ func DeleteUserRelations(id string, userId string) (interface{}, types.ErrorType
 		}
 	} else if rowsAffected == 0 {
 		return nil, types.ErrorType{
-			Message:    "No relation found",
-			StatusCode: 404,
+			Message:    "You can't delete the relation which is not associated to you",
+			StatusCode: 403,
 		}
 	}
 	return rowsAffected, types.ErrorType{}

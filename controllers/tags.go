@@ -1,17 +1,19 @@
 package controllers
 
-func CreateTag() {
+import "net/http"
+
+func CreateTag(w http.ResponseWriter, r *http.Request) {
 
 }
-func DeleteTag() {
+func DeleteTag(w http.ResponseWriter, r *http.Request) {
 
 }
-func UpdateTag() {
+func UpdateTag(w http.ResponseWriter, r *http.Request) {
 
 }
-func GetTag() {
+func GetTag(w http.ResponseWriter, r *http.Request) {
 
 }
-func GetAllTag() {
+func GetAllTag(w http.ResponseWriter, r *http.Request) {
 
 }

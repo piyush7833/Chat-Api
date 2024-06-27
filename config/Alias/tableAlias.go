@@ -9,3 +9,18 @@ func GetUserRelationAlias() map[string]string {
 		"relatedUser":  "u2",
 	}
 }
+func GetReminderAlias() map[string]string {
+	return map[string]string{
+		"reminder": mainAlias,
+		"sender":   "s",
+		"receiver": "r",
+	}
+}
+func GetTagsAlias() map[string]string {
+	return map[string]string{
+		"tags":     mainAlias,
+		"user":     "u",
+		"message":  "m",
+		"reminder": "r",
+	}
+}

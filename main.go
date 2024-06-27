@@ -30,6 +30,7 @@ func main() {
 	}
 
 	services.ConnectDb()
+	// scripts.CreateTables()
 	router := InitRoutes()
 
 	log.Println("Server is running on port 8080")
@@ -47,6 +48,7 @@ func InitRoutes() *mux.Router {
 	routes.AuthRoutes(router.PathPrefix("/api").Subrouter())
 	routes.UserRoutes(router.PathPrefix("/api/user").Subrouter(), protectedRouter.PathPrefix("/user").Subrouter())
 	routes.UserRelationRoutes(router.PathPrefix("/api/ur").Subrouter(), protectedRouter.PathPrefix("/ur").Subrouter())
+	routes.ReminderRoutes(router.PathPrefix("/api/reminder").Subrouter(), protectedRouter.PathPrefix("/reminder").Subrouter())
 
 	//graphql
 	// srv := InitGraphql()

@@ -36,3 +36,40 @@ func GetValidUserRelationColumns() map[string]bool {
 		"updatedAt":         true,
 	}
 }
+func GetValidTagsColumns() map[string]bool {
+	return map[string]bool{
+		"id":              true,
+		"userId":          true,
+		"user_name":       true,
+		"messageId":       true,
+		"message_content": true,
+		"message_type":    true,
+		"reminderId":      true,
+		"reminder_title":  true,
+		"title":           true,
+		"createdAt":       true,
+		"updatedAt":       true,
+	}
+}
+
+func GetValidReminderColumns() map[string]bool {
+	return map[string]bool{
+		"id":            true,
+		"message":       true,
+		"time":          true,
+		"senderId":      true,
+		"sender_name":   true,
+		"receiverId":    true,
+		"reciever_name": true,
+		"tune":          true,
+		"createdAt":     true,
+		"updatedAt":     true,
+	}
+}
+func UpdateValidReminderColumns() map[string]bool {
+	return map[string]bool{
+		"message": true,
+		"time":    true,
+		"tune":    true,
+	}
+}

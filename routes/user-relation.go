@@ -6,7 +6,7 @@ import (
 )
 
 func UserRelationRoutes(router *mux.Router, protectedRouter *mux.Router) {
-
+	// fmt.Println("userRelation routes")
 	protectedRouter.HandleFunc("/create", controllers.CreateUserRelations).Methods("POST")
 	protectedRouter.HandleFunc("/update", controllers.UpdateUserRelations).Methods("PATCH")
 	protectedRouter.HandleFunc("/get", controllers.GetParticularUserRelations).Methods("GET")

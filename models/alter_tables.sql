@@ -24,9 +24,10 @@ ADD FOREIGN KEY ("createdBy") REFERENCES "users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "reminders"
 ADD FOREIGN KEY ("senderId") REFERENCES "users" ("id") ON DELETE CASCADE,
-ADD FOREIGN KEY ("recieverId") REFERENCES "users" ("id") ON DELETE CASCADE;
+ADD FOREIGN KEY ("receiverId") REFERENCES "users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "tags"
+ADD FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE,
 ADD FOREIGN KEY ("messageId") REFERENCES "messages" ("id") ON DELETE CASCADE,
 ADD FOREIGN KEY ("reminderId") REFERENCES "reminders" ("id") ON DELETE CASCADE;
 

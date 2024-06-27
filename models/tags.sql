@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS "tags" (
     "id" VARCHAR(255) NOT NULL DEFAULT uuid_generate_v4(),
+    "userId" VARCHAR(255) NOT NULL,
     "messageId" VARCHAR(255),
     "reminderId" VARCHAR(255),
     "title" VARCHAR(255),

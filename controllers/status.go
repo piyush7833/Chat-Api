@@ -1,20 +1,22 @@
 package controllers
 
-func CreateStatus() {
+import "net/http"
+
+func CreateStatus(w http.ResponseWriter, r *http.Request) {
 
 }
-func UpdateStatus() {
+func UpdateStatus(w http.ResponseWriter, r *http.Request) {
 
 }
-func DeleteStatus() {
+func DeleteStatus(w http.ResponseWriter, r *http.Request) {
 
 }
-func GetStatus() {
+func GetStatus(w http.ResponseWriter, r *http.Request) {
 
 }
-func GetAllStatusOfUser() {
+func GetAllStatusOfUser(w http.ResponseWriter, r *http.Request) {
 
 }
-func GetAllStatusOfUsersFriend() {
+func GetAllStatusOfUsersFriend(w http.ResponseWriter, r *http.Request) {
 
 }
