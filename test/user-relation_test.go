@@ -22,6 +22,12 @@ func TestCreateUserRelation(t *testing.T) {
 	// fmt.Println(userRelation)
 	TestPostRequest(t, userRelation, "/api/protected/ur/create", 201, "User relation created successfully", true)
 }
+func TestCreateUserRelationErrorMissingField(t *testing.T) {
+	userRelation := `{
+			}`
+	// fmt.Println(userRelation)
+	TestPostRequest(t, userRelation, "/api/protected/ur/create", 500, "Missing required field", true)
+}
 func TestCreateUserRelationErrorDuplicateRelation(t *testing.T) {
 	var whereClause = "username = 'related_user'"
 	res, err := services.GetRows("users", 0, []string{"id"}, config.GetValidUserColumns(), &whereClause, nil, nil, nil, true)
@@ -82,6 +88,9 @@ func TestGetAllUserRelationParticularType(t *testing.T) {
 func TestGetAllUserRelationParticularTypeParticularStatus(t *testing.T) {
 	TestGetRequest(t, "/api/protected/ur/get-all?type=sent&status=pending", 200, "User relations fetched successfully", true)
 }
+func TestGetAllUserRelationNoneFound(t *testing.T) {
+	TestGetRequest(t, "/api/protected/ur/get-all", 200, "no userReltion found", true)
+}
 func TestGetAllUserRelationErrorUnauthorized(t *testing.T) {
 	TestGetRequest(t, "/api/protected/ur/get-all", 401, "login required", false)
 }
@@ -107,7 +116,7 @@ func TestGetParticularUserRelation(t *testing.T) {
 }
 func TestGetParticularUserRelationErrorUserRelationNotFound(t *testing.T) {
 	url := fmt.Sprintf("/api/protected/ur/get?id=%v", "randomId")
-	TestGetRequest(t, url, 404, "No userRelation found", true)
+	TestGetRequest(t, url, 403, "User relation does not exists or it is not associated with you", true)
 }
 func TestGetParticularUserRelationErrorInvalidColumn(t *testing.T) {
 	res, err := services.GetRows("userRelation", 0, []string{"id"}, config.GetValidUserColumns(), nil, nil, nil, nil, true)
@@ -137,6 +146,7 @@ func TestGetParticularUserRelationErrorNotAllowed(t *testing.T) { //can be test 
 	TestGetRequest(t, url, 403, "Only user and related user are allowed to view this relation", true)
 }
 
+// update user relation tests
 func TestUpdateUserRelation(t *testing.T) { //their is only one user relation exist which is sent by logged in user and sender can not change status so this will be tested in last
 	res, err := services.GetRows("userRelation", 0, []string{"id"}, config.GetValidUserColumns(), nil, nil, nil, nil, true)
 	if err.StatusCode != 0 {
@@ -166,7 +176,7 @@ func TestUpdateUserRelationErrorNotFound(t *testing.T) {
 	userRelation := `{
 		"invalid":  "friends"
 	}`
-	TestPatchRequest(t, userRelation, url, 404, "no userRelation found", true)
+	TestPatchRequest(t, userRelation, url, 403, "User relation does not exists or it is not associated with you", true)
 }
 func TestUpdateUserRelationErrorUnauthorized(t *testing.T) {
 	res, err := services.GetRows("userRelation", 0, []string{"id"}, config.GetValidUserColumns(), nil, nil, nil, nil, true)
@@ -217,7 +227,7 @@ func TestDeleteUserRelation(t *testing.T) {
 }
 func TestDeleteUserRelationErrorNotFound(t *testing.T) {
 	url := fmt.Sprintf("/api/protected/ur/delete?id=%v", "randomId")
-	TestDeleteRequest(t, url, 404, "userRelation not found", true)
+	TestDeleteRequest(t, url, 403, "userRelation not found", true)
 }
 func TestDeleteUserRelationErrorUnauthorised(t *testing.T) {
 	res, err := services.GetRows("userRelation", 0, []string{"id"}, config.GetValidUserColumns(), nil, nil, nil, nil, true)

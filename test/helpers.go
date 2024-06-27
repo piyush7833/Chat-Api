@@ -45,6 +45,7 @@ func TestPostRequest(t *testing.T, data string, url string, expectedStatusCode i
 		var errorResponse helpers.ErrorResponse
 		err = json.NewDecoder(res.Body).Decode(&errorResponse)
 		if err != nil {
+			// fmt.Println(res.Body)
 			t.Fatalf("failed to decode error response: %v", err)
 		}
 		t.Logf("Error message: %s", errorResponse.Message)

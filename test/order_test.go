@@ -53,8 +53,11 @@ func TestOrder(t *testing.T) {
 	// // create other users after testing user routes
 	t.Run("TestCreateOtherUsers", TestCreateOtherUsers)
 
+	t.Run("TestGetAllUserRelationNoneFound", TestGetAllUserRelationNoneFound)
+
 	t.Run("TestCreateUserRelation", TestCreateUserRelation)
 	t.Run("TestCreateUserRelationErrorDuplicateRelation", TestCreateUserRelationErrorDuplicateRelation)
+	t.Run("TestCreateUserRelationErrorMissingField", TestCreateUserRelationErrorMissingField)
 	// t.Run("TestCreateUserRelationErrorRelationAlreadyExist",TestCreateUserRelationErrorRelationAlreadyExist) //need to handle
 	t.Run("TestCreateUserRelationErrorUnauthorized", TestCreateUserRelationErrorUnauthorized)
 	t.Run("TestCreateUserRelationErrorInvalidRelatedUserId", TestCreateUserRelationErrorInvalidRelatedUserId)
@@ -78,14 +81,35 @@ func TestOrder(t *testing.T) {
 	t.Run("TestUpdateUserRelationErrorNotFound", TestUpdateUserRelationErrorNotFound)
 	t.Run("TestUpdateUserRelationErrorUnauthorized", TestUpdateUserRelationErrorUnauthorized)
 
-	t.Run("TestDeleteUserRelationErrorNotFound", TestDeleteUserRelationErrorNotFound)
-	t.Run("TestDeleteUserRelationErrorUnauthorised", TestDeleteUserRelationErrorUnauthorised)
+	t.Run("TestGetAllReminderNoneFound", TestGetAllReminderNoneFound)
+	t.Run("TestCreateReminder", TestCreateReminder)
+	t.Run("TestCreateReminderErrorMissingField", TestCreateReminderErrorMissingField)
+	t.Run("TestCreateReminderErrorInvalidTime", TestCreateReminderErrorInvalidTime)
+	t.Run("TestCreateReminderErrorInvalidReceiverId", TestCreateReminderErrorInvalidReceiverId)
+	t.Run("TestCreateReminderErrorUnauthorized", TestCreateReminderErrorUnauthorized)
+
+	t.Run("TestGetAllReminder", TestGetAllReminder)
+	t.Run("TestGetAllReminderErrorUnauthorized", TestGetAllReminderErrorUnauthorized)
+	t.Run("TestGetAllReminderErrorInvalidColumns", TestGetAllReminderErrorInvalidColumn)
+
+	t.Run("TestGetParticularReminder", TestGetParticularReminder)
+	t.Run("TestGetParticularReminderErrorUnauthorized", TestGetParticularReminderErrorUnauthorized)
+	t.Run("TestGetParticularReminderErrorInvalidColumns", TestGetParticularReminderErrorInvalidColumns)
+	t.Run("TestGetParticularReminderErrorReminderNotFound", TestGetParticularReminderErrorNotFound)
+
+	t.Run("TestUpdateReminder", TestUpdateReminder)
+	t.Run("TestUpdateReminderErrorUnauthorized", TestUpdateReminderErrorUnauthorized)
+	t.Run("TestUpdateReminderErrorInvalidColumns", TestUpdateReminderErrorInvalidColumn)
+	t.Run("TestUpdateReminderErrorReminderNotFound", TestUpdateReminderErrorNotFound)
 
 	// //tests for related user logged in
 	t.Run("Test login related user", TestLoginRelatedUserUsingEmail)
 
 	t.Run("TestUpdateUserRelation", TestUpdateUserRelation)
 	t.Run("TestUpdateUserRelationErrorNotAllowedToRevertToPendingStatus", TestUpdateUserRelationErrorNotAllowedToRevertToPendingStatus)
+
+	t.Run("TestGetParticularUserRelation", TestGetParticularUserRelation)
+	t.Run("TestUpdateReminder", TestUpdateReminder)
 
 	//tests for third user who is not allowed for things
 	t.Run("Test login not allowed user", TestLoginNotAllowedUserUsingPhone)
@@ -94,12 +118,22 @@ func TestOrder(t *testing.T) {
 	t.Run("TestGetParticularUserRelationErrorNotAllowed", TestGetParticularUserRelationErrorNotAllowed)
 	t.Run("TestDeleteUserRelationErrorNotAllowed", TestDeleteUserRelationErrorNotAllowed)
 
+	t.Run("TestGetParticularReminderErrorNotAllowed", TestGetParticularReminderErrorNotAllowed)
+	t.Run("TestUpdateReminderErrorNotAllowed", TestUpdateReminderErrorNotAllowed)
+	t.Run("TestDeleteReminderErrorNotAllowd", TestDeleteReminderErrorNotAllowed)
+
 	// //delete/update tests for main user logged in user
 	t.Run("Test login main user", TestLoginUser)
 	t.Run("TestUpdateUser", TestUpdateUser)
+
+	t.Run("TestDeleteUserRelationErrorNotFound", TestDeleteUserRelationErrorNotFound)
+	t.Run("TestDeleteUserRelationErrorUnauthorised", TestDeleteUserRelationErrorUnauthorised)
 	t.Run("TestDeleteUserRelation", TestDeleteUserRelation)
 
-	t.Run("TestDeleteUserErrorUnauthorized", TestDeleteUserErrorUnauthorized)
+	t.Run("TestDeleteReminderErrorUnauthorized", TestDeleteReminderErrorUnauthorized)
+	t.Run("TestDeleteReminderErrorReminderNotFound", TestDeleteReminderErrorNotFound)
+	t.Run("TestDeleteReminder", TestDeleteReminder)
+
 	t.Run("TestDeleteUser", TestDeleteUser)
 
 	fmt.Println("All tests passed successfully")
